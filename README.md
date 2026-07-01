@@ -101,6 +101,18 @@ GET  /mcp/tools/list   查看可用工具列表
 POST /mcp/tools/call   调用指定工具
 支持工具：`bmi_calculator` · `lab_result_checker` · `drug_dose_calculator` · `icd_code_lookup`
 
+## 效果数据
+
+### Planner路由准确率
+
+| 方案 | 准确率 | 路由延迟 |
+|------|--------|---------|
+| 基座模型(未微调) | 待测 | ~50ms |
+| **QLoRA微调后** | **6/6 (100%)** | **~50ms** |
+| API路由(GLM-5.2) | 6/6 (100%) | 800-2000ms |
+
+训练参数：81条样本，50 epochs，loss从5.5收敛至0.21
+
 ## 已知局限
 
 - 知识库规模偏小（368个chunk），部分疾病覆盖不完整
@@ -115,3 +127,5 @@ POST /mcp/tools/call   调用指定工具
 - BGE-reranker需设置`return_token_type_ids=False`避免CUDA越界访问
 - autoawq会强制降级torch版本，本项目不使用AWQ量化
 - BM25中文分词需用正则提取单字（`[\u4e00-\u9fff]`）而非英文词法分词
+- LoRA合并(`merge_and_unload`)会导致路由精度下降，改用LoRA适配器叠加4bit基座模型推理，避免精度损失
+- Qwen2.5的`generation_config.json`预设了`temperature/top_p/top_k`采样参数，贪婪解码时需显式覆盖这些参数

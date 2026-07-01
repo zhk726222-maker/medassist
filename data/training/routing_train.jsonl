@@ -73,3 +73,9 @@
 {"messages": [{"role": "system", "content": "你是一个医疗助手的任务路由器。判断用户问题应该交给哪个子系统:RAG(医学知识问答)、SQL(患者数据查询)、TOOL(医疗计算工具)。只回答一个词。"}, {"role": "user", "content": "血小板50×10⁹/L危险吗"}, {"role": "assistant", "content": "TOOL"}]}
 {"messages": [{"role": "system", "content": "你是一个医疗助手的任务路由器。判断用户问题应该交给哪个子系统:RAG(医学知识问答)、SQL(患者数据查询)、TOOL(医疗计算工具)。只回答一个词。"}, {"role": "user", "content": "过敏性鼻炎疾病编码"}, {"role": "assistant", "content": "TOOL"}]}
 {"messages": [{"role": "system", "content": "你是一个医疗助手的任务路由器。判断用户问题应该交给哪个子系统:RAG(医学知识问答)、SQL(患者数据查询)、TOOL(医疗计算工具)。只回答一个词。"}, {"role": "user", "content": "我体重70kg身高180cm是否超重"}, {"role": "assistant", "content": "TOOL"}]}
+{"messages": [{"role": "system", "content": "你是一个医疗助手的任务路由器。判断用户问题应该交给哪个子系统:RAG(医学知识问答)、SQL(患者数据查询)、TOOL(医疗计算工具)。只回答一个词。"}, {"role": "user", "content": "数据库里有几个患者"}, {"role": "assistant", "content": "SQL"}]}
+{"messages": [{"role": "system", "content": "你是一个医疗助手的任务路由器。判断用户问题应该交给哪个子系统:RAG(医学知识问答)、SQL(患者数据查询)、TOOL(医疗计算工具)。只回答一个词。"}, {"role": "user", "content": "查询张伟的就诊记录"}, {"role": "assistant", "content": "SQL"}]}
+{"messages": [{"role": "system", "content": "你是一个医疗助手的任务路由器。判断用户问题应该交给哪个子系统:RAG(医学知识问答)、SQL(患者数据查询)、TOOL(医疗计算工具)。只回答一个词。"}, {"role": "user", "content": "哮喘是什么疾病"}, {"role": "assistant", "content": "RAG"}]}
+{"messages": [{"role": "system", "content": "你是一个医疗助手的任务路由器。判断用户问题应该交给哪个子系统:RAG(医学知识问答)、SQL(患者数据查询)、TOOL(医疗计算工具)。只回答一个词。"}, {"role": "user", "content": "高血压的发病机制"}, {"role": "assistant", "content": "RAG"}]}
+{"messages": [{"role": "system", "content": "你是一个医疗助手的任务路由器。判断用户问题应该交给哪个子系统:RAG(医学知识问答)、SQL(患者数据查询)、TOOL(医疗计算工具)。只回答一个词。"}, {"role": "user", "content": "计算一下我的BMI"}, {"role": "assistant", "content": "TOOL"}]}
+{"messages": [{"role": "system", "content": "你是一个医疗助手的任务路由器。判断用户问题应该交给哪个子系统:RAG(医学知识问答)、SQL(患者数据查询)、TOOL(医疗计算工具)。只回答一个词。"}, {"role": "user", "content": "帮我查一下血糖正常值"}, {"role": "assistant", "content": "TOOL"}]}

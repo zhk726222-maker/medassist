@@ -1,29 +1,63 @@
-from app.core.config import client, DEFAULT_MODEL
+import torch
+from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
+from peft import PeftModel
 from app.agents.rag_agent import rag_answer
 from app.agents.nl2sql_agent import nl2sql_answer
 from app.agents.tool_agent import tool_agent_answer
 
-ROUTING_PROMPT = """你是一个医疗助手的任务路由器,判断用户问题应该交给哪个子系统处理。
+BASE_MODEL_PATH = "data/models/Qwen/Qwen2.5-1.5B-Instruct"
+LORA_PATH = "data/checkpoints/planner-lora-final"
+SYSTEM_PROMPT = "你是一个医疗助手的任务路由器。判断用户问题应该交给哪个子系统:RAG(医学知识问答)、SQL(患者数据查询)、TOOL(医疗计算工具)。只回答一个词。"
 
-三个子系统:
-1. RAG - 回答医学知识类问题:疾病介绍、症状原理、治疗方法、用药知识、健康科普
-   例如:"哮喘怎么治疗""高血压有什么症状""阿司匹林的副作用"
-2. SQL - 查询患者数据:处方记录、诊断历史、检验结果、就诊预约
-   例如:"张伟的处方是什么""哪些患者有异常检验结果""今天有哪些预约"
-3. TOOL - 执行医疗计算:BMI计算、检验值解读、药物剂量计算、ICD编码查询
-   例如:"我身高170体重75BMI多少""血糖7.2正常吗""哮喘的ICD编码"
+_tokenizer = None
+_model = None
 
-用户问题:{query}
+def _load_model():
+    global _tokenizer, _model
+    if _model is not None:
+        return
+    print("正在加载Planner模型(基座+LoRA适配器)...")
+    _tokenizer = AutoTokenizer.from_pretrained(BASE_MODEL_PATH, trust_remote_code=True)
 
-只回答一个词:RAG 或 SQL 或 TOOL,不要任何解释。"""
+    # 用4bit量化加载基座模型节省显存
+    bnb_config = BitsAndBytesConfig(
+        load_in_4bit=True,
+        bnb_4bit_quant_type="nf4",
+        bnb_4bit_compute_dtype=torch.bfloat16,
+    )
+    base_model = AutoModelForCausalLM.from_pretrained(
+        BASE_MODEL_PATH,
+        quantization_config=bnb_config,
+        device_map="auto",
+        trust_remote_code=True,
+    )
+    # 叠加LoRA适配器，不合并，保持精度
+    _model = PeftModel.from_pretrained(base_model, LORA_PATH)
+    _model.eval()
+    print("Planner模型加载完成")
 
 def route(query: str) -> str:
-    prompt = ROUTING_PROMPT.format(query=query)
-    response = client.chat.completions.create(
-        model=DEFAULT_MODEL,
-        messages=[{"role": "user", "content": prompt}],
+    _load_model()
+    messages = [
+        {"role": "system", "content": SYSTEM_PROMPT},
+        {"role": "user", "content": query},
+    ]
+    text = _tokenizer.apply_chat_template(
+        messages, tokenize=False, add_generation_prompt=True
     )
-    decision = response.choices[0].message.content.strip().upper()
+    inputs = _tokenizer(text, return_tensors="pt").to(_model.device)
+    with torch.no_grad():
+        outputs = _model.generate(
+            **inputs,
+            max_new_tokens=5,
+            do_sample=False,
+            temperature=1.0,
+            top_p=1.0,
+            top_k=0,
+            pad_token_id=_tokenizer.eos_token_id,
+        )
+    new_tokens = outputs[0][inputs["input_ids"].shape[1]:]
+    decision = _tokenizer.decode(new_tokens, skip_special_tokens=True).strip().upper()
     if "TOOL" in decision:
         return "TOOL"
     if "SQL" in decision:
@@ -46,15 +80,15 @@ def planner_answer(query: str) -> dict:
 if __name__ == "__main__":
     tests = [
         "哮喘发作的症状有哪些",
-        "王芳最近的诊断记录是什么",
+        "张伟最近的处方是什么",
         "我身高165cm体重60kg,BMI正常吗",
-        "高血压怎么用药治疗",
+        "高血压怎么预防",
         "李娜有哪些异常检验结果",
-        "血红蛋白90g/L正常吗",
+        "血糖7.5mmol/L正常吗",
     ]
     for q in tests:
         print(f"\n{'='*50}")
         print(f"问题: {q}")
         result = planner_answer(q)
         print(f"路由到: {result['routed_to']}")
-        print(f"回答: {result['answer'][:100]}...")
+        print(f"回答: {result['answer'][:80]}...")

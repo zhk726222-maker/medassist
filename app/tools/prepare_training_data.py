@@ -82,6 +82,13 @@ TRAINING_SAMPLES = [
     {"query": "血小板50×10⁹/L危险吗", "label": "TOOL"},
     {"query": "过敏性鼻炎疾病编码", "label": "TOOL"},
     {"query": "我体重70kg身高180cm是否超重", "label": "TOOL"},
+    # 额外补充的边界样本，帮助模型区分RAG和SQL
+    {"query": "数据库里有几个患者", "label": "SQL"},
+    {"query": "查询张伟的就诊记录", "label": "SQL"},
+    {"query": "哮喘是什么疾病", "label": "RAG"},
+    {"query": "高血压的发病机制", "label": "RAG"},
+    {"query": "计算一下我的BMI", "label": "TOOL"},
+    {"query": "帮我查一下血糖正常值", "label": "TOOL"},
 ]
 
 def prepare_data():

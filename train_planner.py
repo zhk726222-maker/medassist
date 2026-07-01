@@ -69,7 +69,7 @@ dataset = dataset.map(format_conversation)
 
 training_args = TrainingArguments(
     output_dir=OUTPUT_DIR,
-    num_train_epochs=30,
+    num_train_epochs=50,
     per_device_train_batch_size=4,
     gradient_accumulation_steps=4,
     warmup_steps=10,

@@ -1,0 +1,36 @@
+# ===== 后端服务 =====
+fastapi==0.115.0
+uvicorn==0.32.0
+python-dotenv==1.0.1
+
+# ===== 大模型API =====
+zhipuai
+
+# ===== 网络请求与文档处理 =====
+httpx==0.27.2
+requests==2.32.3
+beautifulsoup4==4.12.3
+tiktoken==0.8.0
+
+# ===== RAG检索 =====
+chromadb==0.5.20
+rank-bm25==0.2.2
+numpy
+
+# ===== 数据库 =====
+sqlalchemy==2.0.36
+
+# ===== 本地模型推理与微调 =====
+transformers==4.46.0
+peft==0.13.2
+bitsandbytes==0.44.1
+trl==0.11.4
+datasets==3.1.0
+
+# ===== 前端与MCP =====
+streamlit==1.40.0
+fastmcp
+
+# ===== Rerank模型 =====
+# torch需单独安装GPU版本,不要通过此文件装:
+# pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124

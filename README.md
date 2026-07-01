@@ -48,11 +48,14 @@
 ## 数据库设计
 
 5张表覆盖完整医疗场景：
-patients(患者) → diagnoses(诊断) → prescriptions(处方)
-↓
-lab_results(检验结果)
-↓
-appointments(就诊预约)
+
+| 表名 | 说明 | 关联 |
+|------|------|------|
+| patients | 患者基本信息（姓名/年龄/血型） | 主表 |
+| diagnoses | 诊断记录（疾病/严重程度/医生） | → patients |
+| prescriptions | 处方记录（药品/剂量/用药频率） | → patients |
+| lab_results | 检验结果（项目/数值/是否异常） | → patients |
+| appointments | 就诊预约（科室/医生/预约状态） | → patients |
 
 ## 快速开始
 
